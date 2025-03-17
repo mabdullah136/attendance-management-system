@@ -2,6 +2,7 @@ import jwt
 from django.http import JsonResponse
 from django.utils.deprecation import MiddlewareMixin
 from django.conf import settings
+import re
 
 class RolePermissionMiddleware(MiddlewareMixin):
     """
@@ -19,7 +20,7 @@ class RolePermissionMiddleware(MiddlewareMixin):
 
         # 🔹 Get Authorization Header
         auth_header = request.headers.get("Authorization")
-        if not auth_header or not auth_header.startswith("Bearer "):
+        if not auth_header or not auth_header.startswith("bearer "):
             return JsonResponse({"error": "Unauthorized - No token provided"}, status=401)
 
         token = auth_header.split(" ")[1]  # Extract token from "Bearer <token>"
@@ -43,12 +44,15 @@ class RolePermissionMiddleware(MiddlewareMixin):
 
         # Define role-based access control (RBAC)
         role_permissions = {
-            "Employee": ["/attendance/create/"],
+            "Employee": ["/attendance/checkIn/", r"^/attendance/checkOut/\d+/$"],
         }
 
         # 🔹 Check if the role is allowed to access this path
-        allowed_paths = role_permissions.get(user_role, [])
-        if request.path not in allowed_paths:
+        # allowed_paths = role_permissions.get(user_role, [])
+        allowed_patterns = role_permissions.get(user_role, [])
+        # if request.path not in allowed_paths:
+        #     return JsonResponse({"error": "Forbidden: You don't have permission to access this resource"}, status=403)
+        if not any(re.match(pattern, request.path) for pattern in allowed_patterns):
             return JsonResponse({"error": "Forbidden: You don't have permission to access this resource"}, status=403)
 
         return None
