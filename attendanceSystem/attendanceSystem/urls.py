@@ -22,4 +22,5 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('attendance/', include('attendance.urls')),
     path('holiday/', include('holiday.urls')),
+    path('leaveRequest/', include('leaves.urls')),
 ]

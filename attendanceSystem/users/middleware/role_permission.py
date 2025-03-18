@@ -44,7 +44,9 @@ class RolePermissionMiddleware(MiddlewareMixin):
 
         # Define role-based access control (RBAC)
         role_permissions = {
-            "Employee": ["/attendance/checkIn/", r"^/attendance/checkOut/\d+/$","/holiday/list/"],
+            "Employee": ["/attendance/checkIn/", r"^/attendance/checkOut/\d+/$","/holiday/list/","/leaveRequest/"],
+            "Manager": ["/attendance/checkIn/", r"^/attendance/checkOut/\d+/$","/holiday/list/","/leaveRequest/"],
+            "HR": ["/attendance/checkIn/", r"^/attendance/checkOut/\d+/$","/holiday/list/","/leaveRequest/"],
         }
 
         # 🔹 Check if the role is allowed to access this path
